@@ -1,0 +1,37 @@
+services:
+  # Backend API service
+  - type: web
+    name: finance-app-backend
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    envVars:
+      - key: POSTGRES_DB
+        value: finance_db
+      - key: POSTGRES_USER
+        value: finance_user
+      - key: POSTGRES_PASSWORD
+        sync: false  # Render will prompt for this value
+      - key: DATABASE_URL
+        sync: false  # Render will prompt for this value
+      - key: GOOGLE_API_KEY
+        sync: false  # Render will prompt for this value
+      - key: SECRET_KEY
+        generateValue: true  # Render will generate a random value
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: 30
+      - key: ENVIRONMENT
+        value: production
+      - key: FRONTEND_URL
+        value: https://finance-app-frontend.onrender.com  # Update with your frontend URL
+
+  # Frontend static site
+  - type: web
+    name: finance-app-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/build
+    envVars:
+      - key: REACT_APP_BACKEND_URL
+        value: https://finance-app-backend.onrender.com  # Update with your backend URL 
